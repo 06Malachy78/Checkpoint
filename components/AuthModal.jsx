@@ -63,18 +63,16 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onSu
     }
   };
 
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+
   const getEmailRedirectUrl = () => {
-    if (typeof window === 'undefined') {
-      return undefined;
-    }
-    return `${window.location.origin}/`;
+    if (!appUrl) return undefined;
+    return `${appUrl.replace(/\/$/, '')}/`;
   };
 
   const getPasswordResetRedirectUrl = () => {
-    if (typeof window === 'undefined') {
-      return undefined;
-    }
-    return `${window.location.origin}/auth/reset-password`;
+    if (!appUrl) return undefined;
+    return `${appUrl.replace(/\/$/, '')}/auth/reset-password`;
   };
 
   const handleForgotPassword = () => {

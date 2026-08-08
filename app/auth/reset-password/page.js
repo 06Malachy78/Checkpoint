@@ -37,11 +37,13 @@ export default function ResetPasswordPage() {
       const refreshToken = search.get('refresh_token') || hash.get('refresh_token');
       const recoveryType = search.get('type') === 'recovery' || hash.get('type') === 'recovery';
 
-      if (accessToken && refreshToken) {
-        const { error } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
+      if (accessToken) {
+        const sessionPayload = { access_token: accessToken };
+        if (refreshToken) {
+          sessionPayload.refresh_token = refreshToken;
+        }
+
+        const { error } = await supabase.auth.setSession(sessionPayload);
 
         if (error && mounted) {
           setErrorMessage(error.message || 'Unable to open the reset link.');
