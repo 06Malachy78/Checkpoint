@@ -11,7 +11,7 @@ export default function Footer() {
             About
           </a>
           <span className="hidden sm:inline">|</span>
-          <span>2026</span>
+          <span>© 2026 Checkpoint Hub. All rights reserved.</span>
         </div>
       </div>
     </footer>

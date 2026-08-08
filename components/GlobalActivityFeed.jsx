@@ -79,30 +79,30 @@ export default function GlobalActivityFeed({
           <p className="text-sm font-medium text-zinc-400">{friendsEmptyMessage}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {sortedItems.map((item) => (
             <Link
               href={`/review/${item.id}`}
               key={item.id}
-              className="group bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row gap-4 sm:gap-5 hover:bg-zinc-800/60 transition-all duration-300 hover:border-[#00FF88]/30 hover:shadow-[0_0_30px_rgba(0,255,136,0.05)]"
+              className="group bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-3 sm:p-4 flex flex-col h-full gap-3 sm:gap-4 hover:bg-zinc-800/60 transition-all duration-300 hover:border-[#00FF88]/30 hover:shadow-[0_0_30px_rgba(0,255,136,0.05)]"
             >
-              <div className="w-full sm:w-24 h-48 sm:h-32 flex-shrink-0 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950">
+              <div className="w-full overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950 aspect-[4/5]">
                 <img
                   src={item.gameData?.cover?.url?.replace('t_thumb', 't_cover_big')}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
                   alt={item.gameData?.name}
                 />
               </div>
 
               <div className="flex flex-col justify-between py-1 min-w-0">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 mb-2 text-xs uppercase tracking-[0.18em] text-zinc-400 font-black">
+                  <div className="flex flex-wrap items-center gap-1.5 mb-2 text-[11px] uppercase tracking-[0.16em] text-zinc-400 font-black">
                     <span className="text-[#00FF88] truncate">{item.username}</span>
                     <span className="text-zinc-700">•</span>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900 border border-zinc-800 px-2 py-1 text-[10px] font-semibold text-zinc-300">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900 border border-zinc-800 px-2 py-1 text-[9px] font-semibold text-zinc-300">
                       <svg
                         viewBox="0 0 24 24"
-                        className="h-3.5 w-3.5 text-[#00FF88]"
+                        className="h-3 w-3 text-[#00FF88]"
                         aria-hidden="true"
                         fill="currentColor"
                       >
@@ -111,28 +111,17 @@ export default function GlobalActivityFeed({
                       {item.like_count ?? 0}
                     </span>
                     {typeof item.rating === 'number' && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900 border border-zinc-800 px-2 py-1 text-[10px] font-semibold text-zinc-300">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-zinc-900 border border-zinc-800 px-2 py-1 text-[9px] font-semibold text-zinc-300">
                         <span className="text-yellow-400">★</span>
                         {item.rating}/5
                       </span>
                     )}
                   </div>
 
-                  <h2 className="text-lg font-bold text-zinc-100 group-hover:text-[#00FF88] transition-colors line-clamp-1 truncate">
+                  <h2 className="text-base sm:text-lg font-bold text-zinc-100 group-hover:text-[#00FF88] transition-colors line-clamp-1 truncate">
                     {item.gameData?.name}
                   </h2>
-                  <p className="text-zinc-400 text-sm line-clamp-2 italic mt-2 leading-relaxed break-words whitespace-pre-wrap">
-                    "{item.content}"
-                  </p>
                 </div>
-
-                <span className="text-[10px] uppercase tracking-widest text-zinc-600 font-black mt-4">
-                  {new Date(item.created_at).toLocaleDateString('en-GB', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                  })}
-                </span>
               </div>
             </Link>
           ))}

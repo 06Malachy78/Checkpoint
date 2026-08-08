@@ -393,13 +393,11 @@ export default function Navbar({ initialUser = null }) {
             {/* 🔥 2. ALTERED AUTHENTICATED LINKS BLOCK */}
             {user ? (
               <>
-                <div className="relative" ref={notificationsRef}>
-                  <button
-                    type="button"
-                    onClick={handleNotificationsToggle}
-                    aria-label="Notifications"
-                    aria-expanded={isNotificationsOpen}
-                    className="relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-[#00FF88]/50 hover:text-[#00FF88] transition-colors"
+                <div className="relative">
+                  <Link
+                    href="/notifications"
+                    className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full border bg-zinc-900 text-zinc-300 transition-colors ${pathname === '/notifications' ? 'border-[#00FF88] shadow-[0_0_0_2px_rgba(0,255,136,0.35)]' : 'border-zinc-800 hover:border-[#00FF88]/50 hover:text-[#00FF88]'}`}
+                    aria-label="View notifications"
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-4 w-4" aria-hidden="true">
                       <path d="M15 17h5l-1.4-1.4c-.4-.4-.6-.9-.6-1.5V11a6 6 0 10-12 0v3.1c0 .6-.2 1.1-.6 1.5L4 17h5" />
@@ -410,60 +408,7 @@ export default function Navbar({ initialUser = null }) {
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}
-                  </button>
-
-                  {isNotificationsOpen && (
-                    <div className="absolute right-0 mt-2 w-[320px] max-w-[85vw] rounded-2xl border border-zinc-800 bg-zinc-950 shadow-[0_20px_50px_rgba(0,0,0,0.75)] z-[110] overflow-hidden">
-                      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
-                        <p className="text-[10px] uppercase tracking-[0.2em] font-black text-zinc-400">Notifications</p>
-                        <span className="text-[10px] font-black uppercase tracking-[0.18em] text-zinc-600">
-                          {notifications.length} items
-                        </span>
-                      </div>
-
-                      <div className="max-h-[360px] overflow-y-auto">
-                        {isNotificationsLoading ? (
-                          <p className="px-4 py-4 text-xs uppercase tracking-[0.16em] text-zinc-500">Loading...</p>
-                        ) : notificationsError ? (
-                          <p className="px-4 py-4 text-xs uppercase tracking-[0.16em] text-red-400">{notificationsError}</p>
-                        ) : notifications.length === 0 ? (
-                          <p className="px-4 py-4 text-xs uppercase tracking-[0.16em] text-zinc-500">No recent friend activity.</p>
-                        ) : (
-                          notifications.map((item) => {
-                            const initials = (item.actorUsername || 'U').slice(0, 2).toUpperCase();
-                            return (
-                              <Link
-                                key={item.id}
-                                href={item.href || '/profile'}
-                                onClick={() => setIsNotificationsOpen(false)}
-                                className="flex items-start gap-3 border-b border-zinc-900 px-4 py-3 hover:bg-zinc-900/80 transition-colors"
-                              >
-                                {item.actorAvatarUrl ? (
-                                  <img
-                                    src={item.actorAvatarUrl}
-                                    alt={`${item.actorUsername || 'User'} avatar`}
-                                    className="h-9 w-9 rounded-full object-cover bg-zinc-900 border border-zinc-800"
-                                  />
-                                ) : (
-                                  <div className="h-9 w-9 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-black flex items-center justify-center">
-                                    {initials}
-                                  </div>
-                                )}
-
-                                <div className="min-w-0">
-                                  <p className="text-sm text-zinc-100 leading-snug break-words">{item.title}</p>
-                                  <p className="mt-1 text-xs text-zinc-500 truncate">{item.subtitle}</p>
-                                  <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-zinc-600">
-                                    {formatRelativeTime(item.createdAt)}
-                                  </p>
-                                </div>
-                              </Link>
-                            );
-                          })
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  </Link>
                 </div>
 
                 <Link 
