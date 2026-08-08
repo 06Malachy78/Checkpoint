@@ -269,8 +269,9 @@ export default function Navbar({ initialUser = null }) {
       <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-zinc-800">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex flex-wrap items-center gap-2 sm:gap-6">
           
-          <Link href="/" className="text-[#00FF88] font-black text-base sm:text-xl tracking-tight transition-colors duration-200 hover:text-[#7CFFBF] hover:opacity-90">
-            CHECKPOINT
+          <Link href="/" className="inline-flex items-center gap-2 text-[#00FF88] font-black text-base sm:text-xl tracking-tight transition-colors duration-200 hover:text-[#7CFFBF] hover:opacity-90">
+            <img src="/favicon.png" alt="Checkpoint logo" className="h-6 w-6 rounded-full" />
+            <span>CHECKPOINT</span>
           </Link>
 
           <div className="relative order-3 basis-full sm:order-2 sm:basis-auto sm:flex-grow sm:max-w-md" ref={dropdownRef}>
