@@ -20,6 +20,8 @@ export default function ResetPasswordPage() {
   );
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
   const [canReset, setCanReset] = useState(false);
@@ -133,30 +135,52 @@ export default function ResetPasswordPage() {
                 <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-zinc-500">
                   New Password
                 </label>
-                <input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full rounded-2xl border border-white/5 px-5 py-3.5 text-white outline-none transition-all focus:border-[#00e054]/40"
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
-                  required
-                  minLength={8}
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full rounded-2xl border border-white/5 px-5 py-3.5 text-white outline-none transition-all focus:border-[#00e054]/40"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-400 hover:text-[#00FF88] hover:bg-white/10 transition-colors"
+                    aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                    title={showNewPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <EyeIcon open={showNewPassword} />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <label className="ml-1 text-[10px] font-black uppercase tracking-widest text-zinc-500">
                   Confirm Password
                 </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full rounded-2xl border border-white/5 px-5 py-3.5 text-white outline-none transition-all focus:border-[#00e054]/40"
-                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
-                  required
-                  minLength={8}
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full rounded-2xl border border-white/5 px-5 py-3.5 text-white outline-none transition-all focus:border-[#00e054]/40"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
+                    required
+                    minLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-400 hover:text-[#00FF88] hover:bg-white/10 transition-colors"
+                    aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                    title={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  >
+                    <EyeIcon open={showConfirmPassword} />
+                  </button>
+                </div>
               </div>
 
               <button

@@ -15,6 +15,9 @@ export default function EditProfileModal({ isOpen, onClose, profile, user }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -46,6 +49,14 @@ export default function EditProfileModal({ isOpen, onClose, profile, user }) {
     const seed = (username || profile?.username || user?.email || 'U').trim();
     return seed.slice(0, 2).toUpperCase();
   }, [profile?.username, user?.email, username]);
+
+  const EyeIcon = ({ open }) => (
+    <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden="true">
+      <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" />
+      <circle cx="12" cy="12" r="3" />
+      {!open && <path d="M4 4l16 16" />}
+    </svg>
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -440,35 +451,68 @@ export default function EditProfileModal({ isOpen, onClose, profile, user }) {
           <form onSubmit={handleChangePassword} className="mt-4 grid gap-3">
             <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
               Current Password
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(event) => setCurrentPassword(event.target.value)}
-                className="mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-[#00FF88]/60"
-                autoComplete="current-password"
-              />
+              <div className="relative">
+                <input
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  value={currentPassword}
+                  onChange={(event) => setCurrentPassword(event.target.value)}
+                  className="mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 pr-11 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-[#00FF88]/60"
+                  autoComplete="current-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowCurrentPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-400 hover:text-[#00FF88] hover:bg-white/10 transition-colors"
+                  aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
+                  title={showCurrentPassword ? 'Hide password' : 'Show password'}
+                >
+                  <EyeIcon open={showCurrentPassword} />
+                </button>
+              </div>
             </label>
 
             <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
               New Password
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(event) => setNewPassword(event.target.value)}
-                className="mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-[#00FF88]/60"
-                autoComplete="new-password"
-              />
+              <div className="relative">
+                <input
+                  type={showNewPassword ? 'text' : 'password'}
+                  value={newPassword}
+                  onChange={(event) => setNewPassword(event.target.value)}
+                  className="mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 pr-11 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-[#00FF88]/60"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-400 hover:text-[#00FF88] hover:bg-white/10 transition-colors"
+                  aria-label={showNewPassword ? 'Hide password' : 'Show password'}
+                  title={showNewPassword ? 'Hide password' : 'Show password'}
+                >
+                  <EyeIcon open={showNewPassword} />
+                </button>
+              </div>
             </label>
 
             <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
               Confirm New Password
-              <input
-                type="password"
-                value={confirmNewPassword}
-                onChange={(event) => setConfirmNewPassword(event.target.value)}
-                className="mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-[#00FF88]/60"
-                autoComplete="new-password"
-              />
+              <div className="relative">
+                <input
+                  type={showConfirmNewPassword ? 'text' : 'password'}
+                  value={confirmNewPassword}
+                  onChange={(event) => setConfirmNewPassword(event.target.value)}
+                  className="mt-2 w-full rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 pr-11 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none focus:border-[#00FF88]/60"
+                  autoComplete="new-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmNewPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-400 hover:text-[#00FF88] hover:bg-white/10 transition-colors"
+                  aria-label={showConfirmNewPassword ? 'Hide password' : 'Show password'}
+                  title={showConfirmNewPassword ? 'Hide password' : 'Show password'}
+                >
+                  <EyeIcon open={showConfirmNewPassword} />
+                </button>
+              </div>
             </label>
 
             <div className="flex justify-end">
