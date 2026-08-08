@@ -27,6 +27,9 @@ export const metadata = {
     title: 'Checkpoint Hub',
     description: 'Discover, track, and review games with Checkpoint Hub.',
   },
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 const poppins = Poppins({
@@ -34,16 +37,6 @@ const poppins = Poppins({
   weight: ['400', '500', '600', '700'],
   display: 'swap',
 });
-
-import Head from 'next/head';
-
-
-    <>
-      <Head>
-        <link rel="icon" href="/favicon.png" type="image/png" />
-      </Head>
-    </>
-
 
 export default async function RootLayout({ children }) {
   const supabase = await createClient();

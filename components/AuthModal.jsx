@@ -14,6 +14,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onSu
   const [pendingVerificationEmail, setPendingVerificationEmail] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
   const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMode, setForgotMode] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
   const [authMessage, setAuthMessage] = useState('');
   const router = useRouter();
 
@@ -39,6 +41,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onSu
       setPendingVerificationEmail('');
       setResendLoading(false);
       setForgotLoading(false);
+      setForgotMode(false);
+      setForgotEmail('');
       setAuthMessage('');
     }
   }, [isOpen, initialMode]);
@@ -73,46 +77,37 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onSu
     return `${window.location.origin}/auth/reset-password`;
   };
 
-  const handleForgotPassword = async () => {
-    const rawIdentifier = loginIdentifier.trim();
-    if (!rawIdentifier) {
-      setAuthMessage('Enter your email or username first.');
+  const handleForgotPassword = () => {
+    setForgotMode(true);
+    setForgotEmail(loginIdentifier.trim() || email.trim());
+    setAuthMessage('');
+  };
+
+  const handleSendPasswordReset = async (event) => {
+    event?.preventDefault();
+    const emailToReset = forgotEmail.trim();
+
+    if (!emailToReset) {
+      setAuthMessage('Enter an email address first.');
+      return;
+    }
+
+    if (!emailToReset.includes('@')) {
+      setAuthMessage('Enter a valid email address.');
       return;
     }
 
     setForgotLoading(true);
     setAuthMessage('');
 
-    const resolveResponse = await fetch('/api/auth/resolve-login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ identifier: rawIdentifier }),
-    });
-
-    let resolvedEmail = '';
-    try {
-      const resolvePayload = await resolveResponse.json();
-      resolvedEmail = (resolvePayload?.email || '').trim();
-
-      if (!resolveResponse.ok || !resolvedEmail) {
-        throw new Error(resolvePayload?.error || 'Unable to send reset email.');
-      }
-    } catch (error) {
-      setAuthMessage(toFriendlyAuthMessage(error?.message, 'Unable to send reset email.'));
-      setForgotLoading(false);
-      return;
-    }
-
-    const { error } = await supabase.auth.resetPasswordForEmail(resolvedEmail, {
+    const { error } = await supabase.auth.resetPasswordForEmail(emailToReset, {
       redirectTo: getPasswordResetRedirectUrl(),
     });
 
     if (error) {
       setAuthMessage(toFriendlyAuthMessage(error.message, 'Unable to send reset email.'));
     } else {
-      setAuthMessage('Password reset email sent. Check your inbox.');
+      setAuthMessage(`Password reset email sent to ${emailToReset}. Check your inbox.`);
     }
 
     setForgotLoading(false);
@@ -304,91 +299,139 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login', onSu
             )}
           </div>
         ) : (
-        <>
-        <form onSubmit={handleAuth} className="w-full flex flex-col gap-5">
-          
-          {/* USERNAME: Only renders on Sign Up */}
-          {isSignUp && (
-            <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Username</label>
-              <input 
-                type="text" 
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="e.g. dave"
-                className="w-full text-white px-5 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all placeholder:text-zinc-700 text-sm"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}  
-                required={isSignUp}
-              />
-            </div>
-          )}
+          <>
+            {forgotMode ? (
+              <form onSubmit={handleSendPasswordReset} className="w-full flex flex-col gap-5">
+                <div className="text-sm text-zinc-300 leading-relaxed">
+                  Enter the email address for your account and we'll send a reset link.
+                </div>
 
-          {/* LOGIN IDENTIFIER / EMAIL */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
-              {isSignUp ? 'Email Address' : 'Email or Username'}
-            </label>
-            <input 
-              type={isSignUp ? 'email' : 'text'}
-              value={isSignUp ? email : loginIdentifier}
-              onChange={(e) => (isSignUp ? setEmail(e.target.value) : setLoginIdentifier(e.target.value))}
-              placeholder={isSignUp ? 'you@example.com' : 'you@example.com or dave'}
-              className="w-full text-white px-5 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all placeholder:text-zinc-700 text-sm"
-              style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
-              required
-            />
-          </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full text-white px-5 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all placeholder:text-zinc-700 text-sm"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
+                    required
+                  />
+                </div>
 
-          {/* PASSWORD */}
-          <div className="flex flex-col gap-2">
-            <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Password</label>
-            <div className="relative">
-              <input 
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full text-white px-5 pr-12 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all hover:border-white/10"
-                style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
-                required
-              />
+                <button
+                  type="submit"
+                  disabled={forgotLoading}
+                  className="w-full font-black py-4 rounded-xl transition-all active:scale-[0.98] uppercase text-xs tracking-widest mt-4 disabled:opacity-60"
+                  style={{
+                    backgroundColor: '#00e054',
+                    color: '#000',
+                    boxShadow: '0 10px 25px rgba(0, 224, 84, 0.3)',
+                  }}
+                >
+                  {forgotLoading ? 'Sending...' : 'Reset Password'}
+                </button>
 
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-500 hover:text-[#00FF88] hover:bg-white/5 transition-colors"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-                title={showPassword ? 'Hide password' : 'Show password'}
-              >
-                <EyeIcon open={showPassword} />
-              </button>
-            </div>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setForgotMode(false);
+                    setAuthMessage('');
+                  }}
+                  className="text-[10px] text-zinc-500 hover:text-[#00FF88] transition-colors duration-200 font-black uppercase tracking-widest text-center w-full"
+                >
+                  Back to login
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleAuth} className="w-full flex flex-col gap-5">
+                
+                {/* USERNAME: Only renders on Sign Up */}
+                {isSignUp && (
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Username</label>
+                    <input 
+                      type="text" 
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="e.g. dave"
+                      className="w-full text-white px-5 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all placeholder:text-zinc-700 text-sm"
+                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}  
+                      required={isSignUp}
+                    />
+                  </div>
+                )}
 
-            {!isSignUp && (
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                disabled={forgotLoading || loading}
-                className="self-end mt-1 text-[10px] text-zinc-500 hover:text-[#00FF88] transition-colors duration-200 font-black uppercase tracking-widest disabled:opacity-60"
-              >
-                {forgotLoading ? 'Sending...' : 'Forgot password?'}
-              </button>
+                {/* LOGIN IDENTIFIER / EMAIL */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">
+                    {isSignUp ? 'Email Address' : 'Email or Username'}
+                  </label>
+                  <input 
+                    type={isSignUp ? 'email' : 'text'}
+                    value={isSignUp ? email : loginIdentifier}
+                    onChange={(e) => (isSignUp ? setEmail(e.target.value) : setLoginIdentifier(e.target.value))}
+                    placeholder={isSignUp ? 'you@example.com' : 'you@example.com or dave'}
+                    className="w-full text-white px-5 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all placeholder:text-zinc-700 text-sm"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
+                    required
+                  />
+                </div>
+
+                {/* PASSWORD */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Password</label>
+                  <div className="relative">
+                    <input 
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full text-white px-5 pr-12 py-3.5 rounded-2xl outline-none border border-white/5 focus:border-[#00e054]/40 transition-all hover:border-white/10"
+                      style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)' }}
+                      required
+                    />
+
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 inline-flex items-center justify-center h-8 w-8 rounded-full text-zinc-500 hover:text-[#00FF88] hover:bg-white/5 transition-colors"
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      title={showPassword ? 'Hide password' : 'Show password'}
+                    >
+                      <EyeIcon open={showPassword} />
+                    </button>
+                  </div>
+
+                  {!isSignUp && (
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      disabled={forgotLoading || loading}
+                      className="self-end mt-1 text-[10px] text-zinc-500 hover:text-[#00FF88] transition-colors duration-200 font-black uppercase tracking-widest disabled:opacity-60"
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
+
+                <button   
+                  disabled={loading}
+                  className="w-full font-black py-4 rounded-xl transition-all active:scale-[0.98] uppercase text-xs tracking-widest mt-4 hover:border-white/10"
+                  style={{ 
+                    backgroundColor: '#00e054', 
+                    color: '#000',
+                    boxShadow: '0 10px 25px rgba(0, 224, 84, 0.3)' 
+                  }}
+                >
+                  {loading ? '...' : isSignUp ? 'Create Account' : 'Log In'}
+                </button>
+              </form>
             )}
-          </div>
 
-          <button   
-            disabled={loading}
-            className="w-full font-black py-4 rounded-xl transition-all active:scale-[0.98] uppercase text-xs tracking-widest mt-4 hover:border-white/10"
-            style={{ 
-              backgroundColor: '#00e054', 
-              color: '#000',
-              boxShadow: '0 10px 25px rgba(0, 224, 84, 0.3)' 
-            }}
-          >
-            {loading ? '...' : isSignUp ? 'Create Account' : 'Log In'}
-          </button>
-        </form>
-
-        <button 
+            <button 
           onClick={() => setIsSignUp(!isSignUp)}
           className="mt-8 text-[10px] text-zinc-500 hover:text-[#00FF88] transition-colors duration-200 font-black uppercase tracking-widest text-center w-full cursor-pointer"
         >
