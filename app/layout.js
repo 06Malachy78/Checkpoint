@@ -28,7 +28,12 @@ export const metadata = {
     description: 'Discover, track, and review games with Checkpoint Hub.',
   },
   icons: {
-    icon: '/favicon.png',
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+    apple: '/favicon.png',
   },
 };
 
