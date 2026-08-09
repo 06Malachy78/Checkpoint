@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { parseApiResponse } from '@/lib/api-client';
 
-export default function LogModal({ game, isOpen, onClose }) {
+export default function LogModal({ game, isOpen, onClose, onSuccess }) {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -38,9 +38,10 @@ export default function LogModal({ game, isOpen, onClose }) {
       if (!response.ok) {
         alert("Checkpoint save failed: " + (result.error || 'Unknown error'));
       } else {
-        alert("Checkpoint Logged!");
         onClose();
-        window.location.reload(); 
+        if (typeof onSuccess === 'function') {
+          onSuccess();
+        }
       }
     } catch (err) {
       console.error(err);

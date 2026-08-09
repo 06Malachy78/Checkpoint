@@ -7,7 +7,7 @@ export default function GameCoverCard({ src, alt }) {
 
   return (
     <div
-      className="relative w-full max-w-sm mx-auto md:max-w-none overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl shadow-black/50 transition-all duration-300"
+      className="relative w-full max-w-[min(340px,100%)] mx-auto md:max-w-none overflow-hidden rounded-2xl border border-zinc-800 shadow-2xl shadow-black/50 transition-all duration-300"
       style={{
         transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
         boxShadow: isHovered
@@ -21,7 +21,7 @@ export default function GameCoverCard({ src, alt }) {
       <img
         src={src}
         alt={alt}
-        className="w-full rounded-2xl transition-transform duration-500"
+        className="w-full max-h-[70vh] h-auto rounded-2xl transition-transform duration-500"
         style={{
           transform: isHovered ? 'scale(1.035)' : 'scale(1)',
           filter: isHovered ? 'brightness(1.1)' : 'brightness(1)',

@@ -79,7 +79,7 @@ export default function GlobalActivityFeed({
           <p className="text-sm font-medium text-zinc-400">{friendsEmptyMessage}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
           {sortedItems.map((item) => (
             <Link
               href={`/review/${item.id}`}

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import LogModal from '../../../components/LogModal';
 import AuthModal from '../../../components/AuthModal';
@@ -23,6 +23,10 @@ export default function GamePageClient({ game, initialStatus = null, initialRepl
   const [isSavingReplay, setIsSavingReplay] = useState(false);
   const [isSavingFavorite, setIsSavingFavorite] = useState(false);
   const [showFavoriteToast, setShowFavoriteToast] = useState(false);
+  const [showCheckpointToast, setShowCheckpointToast] = useState(false);
+  const [showCheckpointFade, setShowCheckpointFade] = useState(false);
+  const checkpointFadeTimeoutRef = useRef(null);
+  const checkpointHideTimeoutRef = useRef(null);
 
   const handleOpenLog = useCallback(async () => {
     setIsCheckingAuth(true);
@@ -48,6 +52,29 @@ export default function GamePageClient({ game, initialStatus = null, initialRepl
   const handleLoginSuccess = useCallback(() => {
     setAuthOpen(false);
     setModalOpen(true);
+  }, []);
+
+  const handleCheckpointSuccess = useCallback(() => {
+    if (checkpointFadeTimeoutRef.current) {
+      clearTimeout(checkpointFadeTimeoutRef.current);
+    }
+    if (checkpointHideTimeoutRef.current) {
+      clearTimeout(checkpointHideTimeoutRef.current);
+    }
+
+    setShowCheckpointToast(true);
+    setShowCheckpointFade(false);
+
+    checkpointFadeTimeoutRef.current = setTimeout(() => {
+      setShowCheckpointFade(true);
+    }, 2400);
+
+    checkpointHideTimeoutRef.current = setTimeout(() => {
+      setShowCheckpointToast(false);
+      setShowCheckpointFade(false);
+      checkpointFadeTimeoutRef.current = null;
+      checkpointHideTimeoutRef.current = null;
+    }, 3200);
   }, []);
 
   const handleSetStatus = useCallback(async (statusValue) => {
@@ -290,6 +317,7 @@ export default function GamePageClient({ game, initialStatus = null, initialRepl
         game={game} 
         isOpen={isModalOpen} 
         onClose={() => setModalOpen(false)} 
+        onSuccess={handleCheckpointSuccess}
       />
 
       <AuthModal
@@ -302,6 +330,12 @@ export default function GamePageClient({ game, initialStatus = null, initialRepl
       {showFavoriteToast && (
         <div className="fixed bottom-6 right-6 z-[130] rounded-full border border-[#00FF88]/40 bg-zinc-950/95 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#00FF88] shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
           Added to favourites
+        </div>
+      )}
+
+      {showCheckpointToast && (
+        <div className={`fixed bottom-6 right-6 z-[130] rounded-full border border-[#00FF88]/40 bg-[#0f2f16]/95 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#00FF88] shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-500 ease-out ${showCheckpointFade ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
+          Checkpoint logged
         </div>
       )}
     </>

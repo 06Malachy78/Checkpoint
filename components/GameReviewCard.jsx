@@ -7,8 +7,8 @@ export default function GameReviewCard({ review }) {
 
   return (
     <Link href={`/review/${review.id}`} className="block hover:opacity-80 transition">
-      <div className="bg-zinc-900/40 border border-zinc-800/50 p-5 rounded-2xl backdrop-blur-sm min-h-[190px] overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3">
+      <div className="w-full max-w-full sm:max-w-xl lg:max-w-lg mx-auto bg-zinc-900/40 border border-zinc-800/50 p-4 rounded-2xl backdrop-blur-sm min-h-[160px] overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-2.5">
           <div className="flex items-center gap-3 min-w-0">
             {avatarUrl ? (
               <img

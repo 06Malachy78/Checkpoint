@@ -91,7 +91,7 @@ export default function GameReviewFeed({ reviews, followingUserIds = [], initial
           <p className="text-sm font-medium text-zinc-400">{friendsEmptyMessage}</p>
         </div>
       ) : (
-        <div className="space-y-6 max-w-5xl">
+        <div className="space-y-6 max-w-full sm:max-w-4xl lg:max-w-3xl xl:max-w-2xl mx-auto">
           {sortedReviews.map((review) => (
             <GameReviewCard key={review.id} review={review} />
           ))}
