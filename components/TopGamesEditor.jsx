@@ -69,12 +69,12 @@ export default function TopGamesEditor({ profile, userId }) {
 
   return (
     <div className="relative">
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {slots.map((game, i) => (
           <div key={i} className="group relative rounded-3xl border border-zinc-800 overflow-hidden bg-zinc-950 shadow-sm">
             {game ? (
               <>
-                <GameCard game={game} coverMode="contain" />
+                <GameCard game={game} coverMode="contain" hideTitle />
                 <button
                   type="button"
                   onClick={(event) => {

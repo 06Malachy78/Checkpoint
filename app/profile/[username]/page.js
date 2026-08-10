@@ -255,10 +255,10 @@ export default async function UserProfilePage({ params }) {
           </div>
 
           {topGames.length > 0 && (
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-3 gap-3">
               {topGames.map((game, index) => (
                 <div key={index} className="rounded-3xl border border-zinc-800 overflow-hidden bg-zinc-950 shadow-sm">
-                  <GameCard game={game} coverMode="contain" />
+                  <GameCard game={game} coverMode="contain" hideTitle />
                 </div>
               ))}
             </div>

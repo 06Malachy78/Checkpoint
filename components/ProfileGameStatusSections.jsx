@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   GAME_STATUS_ORDER,
   GAME_STATUS_META,
@@ -16,15 +16,28 @@ function getCoverUrl(game) {
 }
 
 export default function ProfileGameStatusSections({ groupedStatuses, visibility }) {
-  const PREVIEW_LIMIT = 7;
+  const DESKTOP_PREVIEW_LIMIT = 7;
+  const MOBILE_PREVIEW_LIMIT = 9;
+  const [previewLimit, setPreviewLimit] = useState(DESKTOP_PREVIEW_LIMIT);
   const [expandedStatus, setExpandedStatus] = useState(null);
+
+  useEffect(() => {
+    const updatePreviewLimit = () => {
+      setPreviewLimit(window.innerWidth < 640 ? MOBILE_PREVIEW_LIMIT : DESKTOP_PREVIEW_LIMIT);
+    };
+
+    updatePreviewLimit();
+    window.addEventListener('resize', updatePreviewLimit);
+
+    return () => window.removeEventListener('resize', updatePreviewLimit);
+  }, []);
 
   return (
     <div className="space-y-10">
       {GAME_STATUS_ORDER.map((statusKey) => {
         const games = groupedStatuses[statusKey] || [];
-        const previewGames = games.slice(0, PREVIEW_LIMIT);
-        const hiddenCount = Math.max(0, games.length - PREVIEW_LIMIT);
+        const previewGames = games.slice(0, previewLimit);
+        const hiddenCount = Math.max(0, games.length - previewLimit);
 
         return (
           <section key={statusKey}>

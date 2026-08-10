@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { parseApiResponse } from '@/lib/api-client';
 import {
   GAME_STATUS_ORDER,
@@ -25,13 +25,26 @@ function cloneGroupedStatuses(groupedStatuses) {
 }
 
 export default function ProfileGameStatusEditor({ groupedStatuses }) {
-  const PREVIEW_LIMIT = 7;
+  const DESKTOP_PREVIEW_LIMIT = 7;
+  const MOBILE_PREVIEW_LIMIT = 9;
+  const [previewLimit, setPreviewLimit] = useState(DESKTOP_PREVIEW_LIMIT);
   const [localGroupedStatuses, setLocalGroupedStatuses] = useState(() => cloneGroupedStatuses(groupedStatuses));
   const [selectedStatus, setSelectedStatus] = useState(null);
   const [expandedStatus, setExpandedStatus] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const updatePreviewLimit = () => {
+      setPreviewLimit(window.innerWidth < 640 ? MOBILE_PREVIEW_LIMIT : DESKTOP_PREVIEW_LIMIT);
+    };
+
+    updatePreviewLimit();
+    window.addEventListener('resize', updatePreviewLimit);
+
+    return () => window.removeEventListener('resize', updatePreviewLimit);
+  }, []);
   const [removingGameId, setRemovingGameId] = useState(null);
 
   const hasVisibleStates = useMemo(() => GAME_STATUS_ORDER.length > 0, []);
@@ -166,8 +179,8 @@ export default function ProfileGameStatusEditor({ groupedStatuses }) {
       <div className="space-y-10">
         {GAME_STATUS_ORDER.map((statusKey) => {
           const games = localGroupedStatuses[statusKey] || [];
-          const previewGames = games.slice(0, PREVIEW_LIMIT);
-          const hiddenCount = Math.max(0, games.length - PREVIEW_LIMIT);
+          const previewGames = games.slice(0, previewLimit);
+          const hiddenCount = Math.max(0, games.length - previewLimit);
 
           return (
             <section key={statusKey}>
