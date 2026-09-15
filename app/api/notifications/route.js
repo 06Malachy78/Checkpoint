@@ -91,14 +91,25 @@ export async function GET(request) {
 
   const { data: followRows, error: followError } = await supabase
     .from('user_follows')
-    .select('following_id')
+    .select('following_id, created_at')
     .eq('follower_id', user.id);
 
   if (followError) {
     return NextResponse.json({ error: followError.message || 'Unable to load follows.' }, { status: 500 });
   }
 
-  const followingIds = Array.from(new Set((followRows || []).map((row) => row.following_id).filter(Boolean)));
+  const followCreatedByUser = new Map();
+  for (const row of followRows || []) {
+    if (!row?.following_id) continue;
+    const timestamp = row.created_at ? new Date(row.created_at).getTime() : null;
+    const previous = followCreatedByUser.get(row.following_id);
+    if (timestamp == null) continue;
+    if (!previous || timestamp < previous) {
+      followCreatedByUser.set(row.following_id, timestamp);
+    }
+  }
+
+  const followingIds = Array.from(followCreatedByUser.keys());
   if (followingIds.length === 0) {
     return NextResponse.json({ ok: true, notifications: [] });
   }
@@ -156,30 +167,44 @@ export async function GET(request) {
     return acc;
   }, {});
 
-  const reviewNotifications = (reviewRows || []).map((review) => {
-    const actorProfile = profileById[review.user_id] || {};
-    return {
-      id: `review:${review.id}`,
-      type: 'review',
-      actorId: review.user_id,
-      actorUsername: actorProfile.username || review.username || 'user',
-      actorAvatarUrl: actorProfile.avatar_url || '',
-      createdAt: review.created_at,
-      title: `${actorProfile.username || review.username || 'A friend'} logged a new checkpoint`,
-      subtitle: review.game_title || 'New game review',
-      href: `/review/${review.id}`,
-    };
-  });
+  const reviewNotifications = (reviewRows || [])
+    .filter((review) => {
+      const followStartedAt = followCreatedByUser.get(review.user_id);
+      if (followStartedAt == null || !review?.created_at) return false;
+      return new Date(review.created_at).getTime() >= followStartedAt;
+    })
+    .map((review) => {
+      const actorProfile = profileById[review.user_id] || {};
+      return {
+        id: `review:${review.id}`,
+        type: 'review',
+        actorId: review.user_id,
+        actorUsername: actorProfile.username || review.username || 'user',
+        actorAvatarUrl: actorProfile.avatar_url || '',
+        createdAt: review.created_at,
+        title: `${actorProfile.username || review.username || 'A friend'} logged a new checkpoint`,
+        subtitle: review.game_title || 'New game review',
+        href: `/review/${review.id}`,
+      };
+    });
 
   const safeStatusRows = statusError ? [] : (statusRows || []);
   const safeFavoriteRows = favoriteError ? [] : (favoriteRows || []);
 
   const statusNotifications = safeStatusRows
-    .filter((row) => row?.updated_at)
+    .filter((row) => {
+      const followStartedAt = followCreatedByUser.get(row.user_id);
+      if (followStartedAt == null || !row?.updated_at) return false;
+      return new Date(row.updated_at).getTime() >= followStartedAt;
+    })
     .map((row) => toStatusNotification(row, profileById));
 
   const favoriteNotifications = safeFavoriteRows
-    .filter((row) => row?.updated_at)
+    .filter((row) => {
+      const followStartedAt = followCreatedByUser.get(row.user_id);
+      if (followStartedAt == null || !row?.updated_at) return false;
+      return new Date(row.updated_at).getTime() >= followStartedAt;
+    })
     .map((row) => toFavoriteNotification(row, profileById));
 
   const notifications = [...reviewNotifications, ...statusNotifications, ...favoriteNotifications]

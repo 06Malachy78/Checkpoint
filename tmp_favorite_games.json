@@ -181,6 +181,35 @@
         "url": "//images.igdb.com/igdb/image/upload/t_thumb/coabbf.jpg"
       },
       "updated_at": "2026-07-05T23:50:32.324Z"
+    },
+    "362096": {
+      "game_id": "362096",
+      "game_name": "Halloween: The Game",
+      "game_cover": {
+        "id": 568840,
+        "url": "//images.igdb.com/igdb/image/upload/t_thumb/coc6x4.jpg"
+      },
+      "updated_at": "2026-09-15T10:15:48.941Z"
+    }
+  },
+  "53e4acf5-4a37-4885-a9da-805408669485": {
+    "17447": {
+      "game_id": "17447",
+      "game_name": "Titanfall 2",
+      "game_cover": {
+        "id": 18564,
+        "url": "//images.igdb.com/igdb/image/upload/t_thumb/fhbeilnghyhhmjqhinqa.jpg"
+      },
+      "updated_at": "2026-09-15T10:33:19.793Z"
+    },
+    "362096": {
+      "game_id": "362096",
+      "game_name": "Halloween: The Game",
+      "game_cover": {
+        "id": 568840,
+        "url": "//images.igdb.com/igdb/image/upload/t_thumb/coc6x4.jpg"
+      },
+      "updated_at": "2026-09-15T10:32:15.701Z"
     }
   }
 }

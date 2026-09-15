@@ -396,6 +396,7 @@ export default function Navbar({ initialUser = null }) {
                 <div className="relative">
                   <Link
                     href="/notifications"
+                    onClick={handleNotificationsToggle}
                     className={`relative inline-flex h-9 w-9 items-center justify-center rounded-full border bg-zinc-900 text-zinc-300 transition-colors ${pathname === '/notifications' ? 'border-[#00FF88] shadow-[0_0_0_2px_rgba(0,255,136,0.35)]' : 'border-zinc-800 hover:border-[#00FF88]/50 hover:text-[#00FF88]'}`}
                     aria-label="View notifications"
                   >
@@ -403,7 +404,7 @@ export default function Navbar({ initialUser = null }) {
                       <path d="M15 17h5l-1.4-1.4c-.4-.4-.6-.9-.6-1.5V11a6 6 0 10-12 0v3.1c0 .6-.2 1.1-.6 1.5L4 17h5" />
                       <path d="M9 17a3 3 0 006 0" />
                     </svg>
-                    {unreadCount > 0 && (
+                    {!isNotificationsOpen && unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#00FF88] text-black text-[10px] leading-[18px] font-black">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
