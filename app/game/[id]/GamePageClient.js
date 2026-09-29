@@ -3,6 +3,7 @@ import { useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import LogModal from '../../../components/LogModal';
 import AuthModal from '../../../components/AuthModal';
+import GameListPicker from '../../../components/GameListPicker';
 import { parseApiResponse } from '@/lib/api-client';
 
 const STATUS_OPTIONS = [
@@ -244,6 +245,13 @@ export default function GamePageClient({ game, initialStatus = null, initialRepl
               <path d="M12 20.4c-.3 0-.6-.1-.8-.3C6.5 16 3.5 13.2 3.5 9.8 3.5 7.1 5.6 5 8.3 5c1.5 0 2.9.7 3.7 1.9C12.8 5.7 14.2 5 15.7 5c2.7 0 4.8 2.1 4.8 4.8 0 3.4-3 6.2-7.7 10.3-.2.2-.5.3-.8.3z" />
             </svg>
           </button>
+          <GameListPicker
+            game={game}
+            onRequireAuth={() => {
+              setAuthMode('signup');
+              setAuthOpen(true);
+            }}
+          />
         </div>
 
         <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-4">

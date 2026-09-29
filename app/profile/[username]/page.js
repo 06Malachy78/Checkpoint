@@ -5,10 +5,12 @@ import ReviewCard from '@/components/ReviewCard';
 import ProfileGameStatusSections from '@/components/ProfileGameStatusSections';
 import ReplayGamesSection from '@/components/ReplayGamesSection';
 import FavoriteGamesSection from '@/components/FavoriteGamesSection';
+import GameListsSection from '@/components/GameListsSection';
 import FollowButton from '@/components/FollowButton';
 import FollowConnectionsSection from '@/components/FollowConnectionsSection';
 import { groupGameStatuses } from '@/lib/game-statuses';
 import { listFavoriteGames } from '@/lib/favorites';
+import { listGameLists } from '@/lib/game-lists';
 import {
   getFollowStats,
   isFollowingUser,
@@ -162,6 +164,7 @@ export default async function UserProfilePage({ params }) {
       replayCount: row.replay_count || 0,
     }));
   const favoriteGames = profile?.id ? await listFavoriteGames(profile.id) : [];
+  const gameLists = profile?.id ? await listGameLists(profile.id, adminSupabase ?? supabase) : [];
 
   const totalGamesPlayed = new Set(
     safeStatusRows
@@ -275,6 +278,8 @@ export default async function UserProfilePage({ params }) {
         <ReplayGamesSection replayGames={replayGames} />
 
         <FavoriteGamesSection favoriteGames={favoriteGames} />
+
+        <GameListsSection lists={gameLists} editable={isOwnProfile} />
 
         <section>
           <div className="flex flex-wrap items-center justify-between gap-3 mb-6">

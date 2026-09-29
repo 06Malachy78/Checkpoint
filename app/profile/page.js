@@ -4,10 +4,12 @@ import ReviewCard from '@/components/ReviewCard.jsx';
 import ProfileGameStatusEditor from '@/components/ProfileGameStatusEditor';
 import ReplayGamesSection from '@/components/ReplayGamesSection';
 import FavoriteGamesSection from '@/components/FavoriteGamesSection';
+import GameListsSection from '@/components/GameListsSection';
 import ProfileHeader from '@/components/ProfileHeader';
 import FollowConnectionsSection from '@/components/FollowConnectionsSection';
 import { groupGameStatuses } from '@/lib/game-statuses';
 import { listFavoriteGames } from '@/lib/favorites';
+import { listGameLists } from '@/lib/game-lists';
 import {
   listFollowers,
   listFollowing,
@@ -92,6 +94,7 @@ export default async function ProfilePage() {
     }));
 
   const favoriteGames = await listFavoriteGames(user.id);
+  const gameLists = await listGameLists(user.id, supabase);
 
   const totalGamesPlayed = new Set(
     safeStatusRows
@@ -167,6 +170,8 @@ export default async function ProfilePage() {
       <ReplayGamesSection replayGames={replayGames} />
 
       <FavoriteGamesSection favoriteGames={favoriteGames} />
+
+      <GameListsSection lists={gameLists} editable />
 
       {/* User Reviews Section */}
       <section>
