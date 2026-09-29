@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { parseApiResponse } from '@/lib/api-client';
 
-export default function ReviewCard({ review, showActions = false, likesCount = null }) {
+export default function ReviewCard({ review, showActions = false, likesCount = null, fullWidth = false }) {
   const router = useRouter();
   const [expanded, setExpanded] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
@@ -143,7 +143,7 @@ export default function ReviewCard({ review, showActions = false, likesCount = n
         </form>
       ) : (
         <Link href={`/review/${review.id}`} className="block transition-all duration-200 hover:opacity-90">
-          <div className="w-full max-w-full sm:max-w-xl lg:max-w-lg mx-auto bg-zinc-900 border border-zinc-800 p-4 rounded-xl transition-all duration-200 hover:border-[#00FF88]/50 hover:shadow-[0_0_0_1px_rgba(0,255,136,0.22)]">
+          <div className={`w-full ${fullWidth ? '' : 'max-w-full sm:max-w-xl lg:max-w-lg mx-auto'} bg-zinc-900 border border-zinc-800 p-4 rounded-xl transition-all duration-200 hover:border-[#00FF88]/50 hover:shadow-[0_0_0_1px_rgba(0,255,136,0.22)]`}>
             <div className="mb-2 flex items-start justify-between gap-3">
               <div className="min-w-0 flex flex-col items-start gap-1.5 pr-1 sm:flex-row sm:items-center sm:gap-3">
                 <h3 className="font-bold text-white uppercase tracking-tighter text-sm break-words sm:truncate">

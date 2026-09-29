@@ -310,6 +310,7 @@ export default async function UserProfilePage({ params }) {
                 key={review.id}
                 review={review}
                 likesCount={likesByReviewId[review.id] || 0}
+                fullWidth
               />
             ))}
           </div>

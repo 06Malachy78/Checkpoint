@@ -190,6 +190,7 @@ export default async function ProfilePage() {
                 review={review}
                 showActions
                 likesCount={likesByReviewId[review.id] || 0}
+                fullWidth
               />
             ))
           ) : (
